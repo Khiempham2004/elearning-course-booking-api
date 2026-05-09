@@ -20,16 +20,28 @@ export const createCourse = async (req, res) => {
 
 export const getAllCourses = async (req, res) => {
     try {
-        const courses = await CourseModel.find();
-        const mappedCourses = courses.map((course) => course);
-        console.log('course', mappedCourses);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 25;
+
+        const courses = await CourseModel.find().select(
+            "-reviews -description"
+        ).limit(limit).skip((page - 1) * limit).sort({ createdAt: -1 }).lean();
+
+        const total = await CourseModel.countDocuments();
 
         res.status(200).json({
+            success: true,
+            total,
+            currentPage: page,
+            totalPages: Math.ceil(total / limit),
             message: "Lay danh sach khoa hoc thanh cong : ",
-            data: mappedCourses
+            data: courses,
         });
     } catch (error) {
-        res.status(500).json(error.message);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
         console.log(error);
     }
 }
@@ -50,24 +62,6 @@ export const getCourseById = async (req, res) => {
     }
 }
 
-export const getCourseDetail = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const courseDetail = await CourseModel.findById(id);
-
-        if (!courseDetail) {
-            return res.status(404).json({ message: "Course not found" });
-        }
-
-        res.status(200).json({
-            message: "Lay chi tiet khoa hoc thanh cong : ",
-            data: courseDetail,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: error.message });
-    }
-}
 
 export const updateCourse = async (req, res) => {
     try {

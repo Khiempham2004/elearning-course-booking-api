@@ -17,9 +17,9 @@ const PORT = process.env.PORT || 9000;
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }))
-app.use("/images", express.static(path.join(process.cwd(), "assets/Images")));
+app.use("/images", express.static(path.join(process.cwd(), "public/Images")));
 
-app.use('/api/user', routesUser);
+app.use('/api/users', routesUser);
 app.use('/api/courses', routesCourse);
 app.use('/api/schedules', routeSchedule);
 app.use('/api/enrollments', routesEnroll);

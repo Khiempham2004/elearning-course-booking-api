@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, getUserProfile } from "../controllers/Auth.controllers.js";
+import { register, login, getUserProfile, getAllUsers, deleteUser, updateUserRole } from "../controllers/Auth.controllers.js";
 import verifytoken from "../middleware/auth.middleware.js";
 import { isAdmin, isUser } from "../middleware/admin.middleware.js";
 
@@ -24,4 +24,11 @@ routesUser.get("/user/dashboard", verifytoken, isUser, (req, res) => {
         user: req.user
     })
 })
+
+routesUser.get("/", verifytoken, isAdmin, getAllUsers);
+
+routesUser.delete("/:id", verifytoken, isAdmin, deleteUser);
+
+routesUser.put("/:id", verifytoken, isAdmin, updateUserRole);
+
 export default routesUser;

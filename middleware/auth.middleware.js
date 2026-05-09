@@ -1,21 +1,35 @@
 import jwt from 'jsonwebtoken'
+import User from '../models/User.models.js';
 
-const verifytoken = (req, res, next) => {
-    const token = req.headers.authorization;
-
-    if (!token) {
-        return res.status(401).json('Khong co token');
-    }
-
-    const tokenAuth = token.split(" ")[1];
+const verifytoken = async (req, res, next) => {
     try {
-        const verified = jwt.verify(tokenAuth, "your-secret-key");
+        const token = req.headers.authorization;
+
+        if (!token) {
+            return res.status(401).json('Khong co token');
+        }
+
+        const tokenAuth = token.split(" ")[1];
+
+        const verified = jwt.verify(tokenAuth, process.env.SECRET_KEY);
+
+        const user = await User.findById(verified.id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User không tồn tại"
+            })
+        }
         console.log(verified);
 
-        req.user = verified;
+        req.user = user;
+
         next();
     } catch (error) {
-        res.status(400).json("Token khong hop le")
+        res.status(401).json({
+            success: false,
+            message: "Token khong hop le"
+        })
     }
 }
 

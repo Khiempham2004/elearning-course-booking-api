@@ -30,17 +30,62 @@ export const createSchedule = async (req, res) => {
     }
 }
 
-// get tat ca lich trinh
+// get tat ca lich học
 export const getAllSchedules = async (req, res) => {
     try {
-        const schedules = await ScheduleModel.find();
+        const schedules = await ScheduleModel.find().populate("courseId");
         res.status(201).json({
-            message: "Lay tat ca lich trinh thanh cong",
+            message: "Lay tat ca lich học thanh cong",
             schedules,
         })
     } catch (error) {
         console.log(error);
         res.status(500).json(error.message)
+    }
+}
+// lay chi tiet lich hoc
+export const getSchedulesDetail = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const detail = await ScheduleModel.findById(id).populate("courseId");
+        if (!detail) {
+            return res.status(404).json({
+                message: "Không tìm thấy lịch học"
+            })
+        }
+        res.status(200).json({
+            message: "Lấy chi tiết lịch học thành công",
+            data: detail
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+//Cap nhat lich hoc
+export const updateSchedule = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const update = await ScheduleModel.findByIdAndUpdate(id, req.body, {
+            new: true
+        });
+        if (!update) {
+            return res.status(404).json({
+                message: "Không tìm thấy lịch học"
+            })
+        }
+        res.status(200).json({
+            message: "Cập nhật thành công",
+            data: update
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: error.message
+        })
     }
 }
 

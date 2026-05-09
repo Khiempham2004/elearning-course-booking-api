@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const scheduleSchema = new mongoose.Schema({
     courseId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Course"
     },
     instructor: String,
