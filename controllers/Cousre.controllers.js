@@ -93,6 +93,7 @@ export const deleteCourse = async (req, res) => {
         res.status(500).json(error.message)
     }
 }
+
 // API lấy danh sách khóa học mà user đã đăng ký
 export const getMyCourses = async (req, res) => {
     try {
