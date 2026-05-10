@@ -46,9 +46,11 @@ export const getAllCourses = async (req, res) => {
     }
 }
 
+//detail course
 export const getCourseById = async (req, res) => {
     try {
         const newCourseById = await CourseModel.findById(req.params.id);
+
         if (!newCourseById) {
             return res.status(404).json({ message: "Course not found" });
         }
@@ -98,8 +100,11 @@ export const deleteCourse = async (req, res) => {
 export const getMyCourses = async (req, res) => {
     try {
         const userId = req.user.id;
+        console.log(userId);
 
         const enrollments = await EnrollmentModel.find({ userId }).populate("courseId"); // de join course
+        console.log(enrollments);
+
 
         const courses = enrollments.map((e) => e.courseId).filter(Boolean);
 

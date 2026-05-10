@@ -8,6 +8,7 @@ export const enrollCourse = async (req, res) => {
         console.log('userid', userId);
 
         const { courseId } = req.body;
+
         const existing = await EnrollmentModel.findOne({ userId, courseId });
         if (existing) {
             return res.status(404).json({ message: 'Ban da dang ky course nay roi' })
@@ -39,7 +40,7 @@ export const getCourse = async (req, res) => {
         const { userId } = req.params;
 
         const enrollments = await EnrollmentModel.find({ userId }).populate("courseId");
-
+        
         res.status(200).json({ message: "Danh sách khóa học", enrollments });
     } catch (error) {
         res.status(500).json({ message: error.message });
