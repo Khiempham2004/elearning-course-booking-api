@@ -16,7 +16,7 @@ export const enrollCourse = async (req, res) => {
 
         const course = await CourseModel.findById(courseId);
         if (!course) {
-            return res.status(404).json({ message: "Course đã tồn tại!" })
+            return res.status(404).json({ message: "Course không tồn tại!" })
         }
         const enrollment = await EnrollmentModel.create({
             userId: userId,
@@ -25,7 +25,7 @@ export const enrollCourse = async (req, res) => {
         });
 
         res.status(201).json({
-            message: "Dang ky thanh cong",
+            message: "Đăng ký thành công",
             data: enrollment,
         })
     } catch (error) {
@@ -35,13 +35,19 @@ export const enrollCourse = async (req, res) => {
 }
 
 // lay course cua User
-export const getCourse = async (req, res) => {
+export const getMyCourses = async (req, res) => {
     try {
-        const { userId } = req.params;
+        const userId = req.user.id;
 
         const enrollments = await EnrollmentModel.find({ userId }).populate("courseId");
-        
-        res.status(200).json({ message: "Danh sách khóa học", enrollments });
+
+
+        const courses = enrollments.map((e) => e.courseId).filter(Boolean);
+
+        res.status(200).json({
+            message: "Danh sách khóa học",
+            courses,
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
         console.log(error);
@@ -53,9 +59,22 @@ export const cancelEnrollment = async (req, res) => {
     try {
         const { id } = req.params;
         const resEnroll = await EnrollmentModel.findByIdAndDelete(id);
-        res.json({ message: 'Huy dang ky thanh cong' }, resEnroll);
+        if (!resEnroll) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found"
+            })
+        }
+        res.json({
+            success: true,
+            message: 'Hủy đăng ký thành công',
+            resEnroll
+        });
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({
+            success: fasle,
+            message: error.message
+        })
         console.log(error);
     }
 }

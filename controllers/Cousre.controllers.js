@@ -59,7 +59,9 @@ export const getCourseById = async (req, res) => {
             data: newCourseById,
         });
     } catch (error) {
-        res.status(500).json(error.message);
+        res.status(500).json({
+            message: error.message
+        });
         console.log(error);
     }
 }
@@ -87,7 +89,7 @@ export const updateCourse = async (req, res) => {
 export const deleteCourse = async (req, res) => {
     try {
         const deletedCourse = await CourseModel.findByIdAndDelete(req.params.id);
-        if (!deleteCourse) {
+        if (!deletedCourse) {
             return res.status(400).json({ message: "Course not found" })
         }
         res.status(200).json("Course deleted successfully", deletedCourse);
@@ -96,24 +98,3 @@ export const deleteCourse = async (req, res) => {
     }
 }
 
-// API lấy danh sách khóa học mà user đã đăng ký
-export const getMyCourses = async (req, res) => {
-    try {
-        const userId = req.user.id;
-        console.log(userId);
-
-        const enrollments = await EnrollmentModel.find({ userId }).populate("courseId"); // de join course
-        console.log(enrollments);
-
-
-        const courses = enrollments.map((e) => e.courseId).filter(Boolean);
-
-        res.status(200).json({
-            message: "Lấy danh sách course thành công",
-            courses,
-        })
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Lỗi server ", error })
-    }
-}
