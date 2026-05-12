@@ -1,5 +1,4 @@
 import CourseModel from "../models/Cousre.models.js";
-import EnrollmentModel from "../models/Enrollment.models.js";
 
 
 export const createCourse = async (req, res) => {
