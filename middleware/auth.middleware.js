@@ -20,7 +20,6 @@ const verifytoken = async (req, res, next) => {
                 message: "User không tồn tại"
             })
         }
-        console.log(verified);
 
         req.user = user;
 
