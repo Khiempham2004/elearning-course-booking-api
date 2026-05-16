@@ -3,17 +3,68 @@ import CourseModel from "../models/Cousre.models.js";
 
 export const createCourse = async (req, res) => {
     try {
-        const newCourse = new CourseModel(req.body);
+        console.log("=== CREATE COURSE ===");
+        console.log("BODY : ", req.body);
+        console.log("FILES : ", req.files);
+        
+        if (!req.files) {
+            console.log("⚠️ NO FILES RECEIVED");
+        } else {
+            console.log("✅ FILES RECEIVED");
+            console.log("courseImage:", req.files.courseImage);
+            console.log("instructorImage:", req.files.instructorImage);
+        }
+
+        const {
+            title,
+            lessons,
+            level,
+            rating,
+            reviews,
+            instructor,
+            price,
+            enrollLink,
+            catagory
+        } = req.body;
+
+        const courseImage = req.files?.courseImage?.[0]?.filename
+            ? `/uploads/${req.files.courseImage[0].filename}`
+            : "";
+
+        const instructorImage = req.files?.instructorImage?.[0]?.filename
+            ? `/uploads/${req.files.instructorImage[0].filename}`
+            : "";
+
+        console.log("courseImage path:", courseImage);
+        console.log("instructorImage path:", instructorImage);
+
+        const newCourse = new CourseModel({
+            title,
+            lessons,
+            level,
+            rating,
+            reviews,
+            instructor,
+            instructorImage,
+            price,
+            enrollLink,
+            courseImage,
+            catagory
+        });
 
         const course = await newCourse.save();
 
         res.status(201).json({
             message: "Tao khoa hoc thanh cong :",
-            data: course
+            data: course,
+            success: true
         });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({
+            message: "Server error",
+            success: false
+        });
     }
 }
 
@@ -68,19 +119,33 @@ export const getCourseById = async (req, res) => {
 
 export const updateCourse = async (req, res) => {
     try {
+        const updateData = { ...req.body };
+
+        if (req.files?.courseImage?.[0]?.filename) {
+            updateData.courseImage = `/uploads/${req.files.courseImage[0].filename}`;
+        }
+
+        if (req.files?.instructorImage?.[0]?.filename) {
+            updateData.instructorImage = `/uploads/${req.files.instructorImage[0].filename}`;
+        }
+
         const updatedCourses = await CourseModel.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updateData,
             { new: true }
         );
         if (!updatedCourses) {
             return res.status(400).json({ message: "Khoa hoc khong ton tai!" })
         };
 
-        res.status(200).json("Cap nhat khoa hoc thanh cong : ", updatedCourses);
+        res.status(200).json({
+            message: "Cap nhat khoa hoc thanh cong",
+            data: updatedCourses,
+            success: true
+        });
     } catch (error) {
         console.log(error);
-        res.status(500).json(error.message)
+        res.status(500).json({ message: error.message, success: false })
     }
 }
 

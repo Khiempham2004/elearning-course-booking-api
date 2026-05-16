@@ -13,17 +13,20 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 9000;
 
-
-app.use(express.json());
+// Middleware order matters! Multer must not conflict with body parsers
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
-app.use(express.urlencoded({ extended: true }))
-app.use("/images", express.static("images"));
 
+// Static files
+app.use("/images", express.static("images"));
+app.use('/uploads', express.static('uploads'));
+
+// Routes
 app.use('/api/users', routesUser);
 app.use('/api/courses', routesCourse);
 app.use('/api/schedules', routeSchedule);
 app.use('/api/enrollments', routesEnroll);
-
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
