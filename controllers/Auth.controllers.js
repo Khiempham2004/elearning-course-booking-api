@@ -113,9 +113,41 @@ export const deleteUser = async (req, res) => {
 
 export const updateUserRole = async (req, res) => {
     try {
-        const { role } = req.body;
+        const { role, name, email } = req.body;
 
-        const user = await User.findByIdAndUpdate(req.params.id, { role }, { new: true });
+        if (!role || !['admin', 'User'].includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid role. Must be 'admin' or 'User'"
+            });
+        }
+
+        if (!name || !name.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Name is required"
+            });
+        }
+
+        if (!email || !email.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Email is required"
+            });
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { role, name, email },
+            { new: true }
+        ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
 
         res.status(200).json({
             success: true,
@@ -123,7 +155,8 @@ export const updateUserRole = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({
+            success: false,
             message: error.message
-        })
+        });
     }
-}
+};
