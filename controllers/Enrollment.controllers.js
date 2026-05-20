@@ -21,11 +21,11 @@ export const enrollCourse = async (req, res) => {
         const enrollment = await EnrollmentModel.create({
             userId: userId,
             courseId: courseId,
-            status: 'approved'
+            status: 'pending'
         });
 
         res.status(201).json({
-            message: "Đăng ký thành công",
+            message: "Đăng ký thành công, chờ admin duyệt",
             data: enrollment,
         })
     } catch (error) {
@@ -267,6 +267,44 @@ export const getEnrollmentByCourse = async (req, res) => {
         res.status(200).json({
             message: "Danh sách đăng ký của course",
             enrollments
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        console.log(error);
+    }
+}
+
+// Complete enrollment - Admin hoàn thành khóa học cho học viên
+export const completeEnrollment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const adminId = req.user.id;
+        const { notes } = req.body;
+
+        const enrollment = await EnrollmentModel.findById(id);
+        if (!enrollment) {
+            return res.status(404).json({ message: "Enrollment không tồn tại" });
+        }
+
+        // Chỉ cho phép hoàn thành nếu đã được duyệt
+        if (enrollment.status !== 'approved') {
+            return res.status(400).json({
+                message: "Chỉ có thể hoàn thành enrollment đã được duyệt (approved)"
+            });
+        }
+
+        enrollment.status = 'completed';
+        enrollment.completedAt = new Date();
+        if (notes) enrollment.notes = notes;
+
+        await enrollment.save();
+        await enrollment.populate("userId", "name email");
+        await enrollment.populate("courseId", "title");
+        await enrollment.populate("approvedBy", "name email");
+
+        res.status(200).json({
+            message: "Hoàn thành khóa học thành công",
+            data: enrollment
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

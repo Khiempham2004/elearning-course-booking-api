@@ -8,7 +8,8 @@ import {
     rejectEnrollment,
     updateEnrollmentStatus,
     getEnrollmentByUser,
-    getEnrollmentByCourse
+    getEnrollmentByCourse,
+    completeEnrollment
 } from '../controllers/Enrollment.controllers.js';
 import verifytoken from '../middleware/auth.middleware.js';
 import { isAdmin } from '../middleware/admin.middleware.js';
@@ -24,6 +25,7 @@ routesEnroll.delete('/:id', verifytoken, cancelEnrollment);
 routesEnroll.get('/', verifytoken, isAdmin, getAllEnrollment);
 routesEnroll.patch('/:id/approve', verifytoken, isAdmin, approveEnrollment);
 routesEnroll.patch('/:id/reject', verifytoken, isAdmin, rejectEnrollment);
+routesEnroll.patch('/:id/complete', verifytoken, isAdmin, completeEnrollment);
 routesEnroll.patch('/:id/status', verifytoken, isAdmin, updateEnrollmentStatus);
 routesEnroll.get('/user/:userId', verifytoken, getEnrollmentByUser);
 routesEnroll.get('/course/:courseId', verifytoken, isAdmin, getEnrollmentByCourse);
