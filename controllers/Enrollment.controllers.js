@@ -39,7 +39,11 @@ export const getMyCourses = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const enrollments = await EnrollmentModel.find({ userId }).populate("courseId", "title lessons price level rating reviews instructor instructorImage courseImage catagory").populate("approvedBy", "name email");
+        const enrollments = await EnrollmentModel.find({ userId })
+            .populate(
+                "courseId",
+                "title lessons price level rating reviews instructor instructorImage courseImage catagory")
+            .populate("approvedBy", "name email");
 
         // Map enrollment data with full course info
         const courses = enrollments.map((e) => ({

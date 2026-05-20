@@ -6,7 +6,7 @@ export const createCourse = async (req, res) => {
         console.log("=== CREATE COURSE ===");
         console.log("BODY : ", req.body);
         console.log("FILES : ", req.files);
-        
+
         if (!req.files) {
             console.log("⚠️ NO FILES RECEIVED");
         } else {
