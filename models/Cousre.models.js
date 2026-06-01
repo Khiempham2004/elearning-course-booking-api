@@ -40,7 +40,15 @@ const courseSchema = new mongoose.Schema({
     },
     catagory: {
         type: String
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     }
+},
+{
+    timestamps: true
 });
 
 const CourseModel = mongoose.model("Course", courseSchema);

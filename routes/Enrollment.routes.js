@@ -1,15 +1,15 @@
 import express from 'express';
-import { 
-    cancelEnrollment, 
-    enrollCourse, 
-    getAllEnrollment, 
+import {
+    enrollCourse,
+    getAllEnrollment,
     getMyCourses,
     approveEnrollment,
     rejectEnrollment,
     updateEnrollmentStatus,
     getEnrollmentByUser,
     getEnrollmentByCourse,
-    completeEnrollment
+    completeEnrollment,
+    deleteEnrollment
 } from '../controllers/Enrollment.controllers.js';
 import verifytoken from '../middleware/auth.middleware.js';
 import { isAdmin } from '../middleware/admin.middleware.js';
@@ -19,7 +19,7 @@ const routesEnroll = express.Router();
 // User routes
 routesEnroll.post('/', verifytoken, enrollCourse);
 routesEnroll.get('/my-courses', verifytoken, getMyCourses);
-routesEnroll.delete('/:id', verifytoken, cancelEnrollment);
+routesEnroll.delete('/:id', verifytoken, deleteEnrollment);
 
 // Admin routes
 routesEnroll.get('/', verifytoken, isAdmin, getAllEnrollment);

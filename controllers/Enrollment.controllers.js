@@ -48,7 +48,7 @@ export const getMyCourses = async (req, res) => {
         // Map enrollment data with full course info
         const courses = enrollments.map((e) => ({
             _id: e._id,
-            enrollmentId: e._id,
+            enrollmentId: e._id,    
             userId: e.userId,
             status: e.status,
             createdAt: e.createdAt,
@@ -77,8 +77,8 @@ export const getMyCourses = async (req, res) => {
     }
 }
 
-//Huy register
-export const cancelEnrollment = async (req, res) => {
+//delete register
+export const deleteEnrollment = async (req, res) => {
     try {
         const { id } = req.params;
         const resEnroll = await EnrollmentModel.findByIdAndDelete(id);
@@ -120,7 +120,7 @@ export const getAllEnrollment = async (req, res) => {
     }
 }
 
-// Approve enrollment
+// Approve enrollment đã duyệt
 export const approveEnrollment = async (req, res) => {
     try {
         const { id } = req.params;
@@ -293,14 +293,14 @@ export const completeEnrollment = async (req, res) => {
             });
         }
 
-        enrollment.status = 'completed';
-        enrollment.completedAt = new Date();
+        enrollment.status = 'completed'; 
+        enrollment.completedAt = new Date(); // Lưu time hoàn thành course
         if (notes) enrollment.notes = notes;
 
         await enrollment.save();
         await enrollment.populate("userId", "name email");
         await enrollment.populate("courseId", "title");
-        await enrollment.populate("approvedBy", "name email");
+        await enrollment.populate("approvedBy", "name email"); // Lấy thông tin admin duyệt
 
         res.status(200).json({
             message: "Hoàn thành khóa học thành công",

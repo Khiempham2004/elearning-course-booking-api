@@ -49,7 +49,8 @@ export const createCourse = async (req, res) => {
             price,
             enrollLink,
             courseImage,
-            catagory
+            catagory,
+            createdBy: req.user.id
         });
 
         const course = await newCourse.save();
@@ -162,3 +163,57 @@ export const deleteCourse = async (req, res) => {
     }
 }
 
+export const getMyCreatedCourses = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Lấy courses do user tạo (có createdBy)
+        const createdCourses = await CourseModel.find({ createdBy: userId })
+            .select("-description")
+            .sort({ createdAt: -1 });
+
+        // Nếu không có courses do user tạo, lấy courses từ enrollments (cách cũ)
+        let allCourses = createdCourses;
+        if (createdCourses.length === 0) {
+            const EnrollmentModel = require("../models/Enrollment.models.js").default;
+            const enrollments = await EnrollmentModel.find({ userId })
+                .populate(
+                    "courseId",
+                    "title lessons price level rating reviews instructor instructorImage courseImage catagory")
+                .populate("approvedBy", "name email")
+                .sort({ createdAt: -1 });
+
+            allCourses = enrollments.map((e) => ({
+                _id: e._id,
+                enrollmentId: e._id,
+                userId: e.userId,
+                status: e.status,
+                createdAt: e.createdAt,
+                ...(e.courseId ? {
+                    title: e.courseId.title,
+                    lessons: e.courseId.lessons,
+                    price: e.courseId.price,
+                    level: e.courseId.level,
+                    rating: e.courseId.rating,
+                    reviews: e.courseId.reviews,
+                    instructor: e.courseId.instructor,
+                    instructorImage: e.courseId.instructorImage,
+                    courseImage: e.courseId.courseImage,
+                    catagory: e.courseId.catagory
+                } : {})
+            })).filter(e => e.courseImage || e.title);
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Danh sách khóa học của bạn",
+            data: allCourses
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+        console.log(error);
+    }
+}

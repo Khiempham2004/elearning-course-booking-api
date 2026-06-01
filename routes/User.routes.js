@@ -7,6 +7,7 @@ const routesUser = express.Router();
 
 routesUser.post("/register", register);
 routesUser.post("/login", login);
+
 // lấy token từ login
 routesUser.get("/profile", verifytoken, getUserProfile)
 
