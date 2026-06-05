@@ -43,16 +43,16 @@ export const getMyCourses = async (req, res) => {
             .populate(
                 "courseId",
                 "title lessons price level rating reviews instructor instructorImage courseImage catagory")
-            .populate("approvedBy", "name email");
+            .populate("approvedBy", "name email")
+            .sort({ createdAt: -1 });
 
         // Map enrollment data with full course info
         const courses = enrollments.map((e) => ({
             _id: e._id,
-            enrollmentId: e._id,    
+            enrollmentId: e._id,
             userId: e.userId,
             status: e.status,
             createdAt: e.createdAt,
-            // Spread course data
             ...(e.courseId ? {
                 title: e.courseId.title,
                 lessons: e.courseId.lessons,
@@ -254,7 +254,7 @@ export const getEnrollmentByUser = async (req, res) => {
     }
 }
 
-// Get enrollment by course
+// Get enrollment by course cac course da dky
 export const getEnrollmentByCourse = async (req, res) => {
     try {
         const { courseId } = req.params;
@@ -293,7 +293,7 @@ export const completeEnrollment = async (req, res) => {
             });
         }
 
-        enrollment.status = 'completed'; 
+        enrollment.status = 'completed';
         enrollment.completedAt = new Date(); // Lưu time hoàn thành course
         if (notes) enrollment.notes = notes;
 

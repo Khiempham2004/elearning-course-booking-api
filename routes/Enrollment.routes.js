@@ -12,7 +12,7 @@ import {
     deleteEnrollment
 } from '../controllers/Enrollment.controllers.js';
 import verifytoken from '../middleware/auth.middleware.js';
-import { isAdmin } from '../middleware/admin.middleware.js';
+import { isAdmin } from '../middleware/authorize.middleware.js';
 
 const routesEnroll = express.Router();
 
