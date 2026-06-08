@@ -19,7 +19,8 @@ app.use(cors());
 
 // Static files
 app.use("/images", express.static("images"));
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads"))
+);
 
 // Routes
 app.use('/api/users', routesUser);

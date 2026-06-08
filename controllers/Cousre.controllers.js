@@ -1,4 +1,5 @@
 import CourseModel from "../models/Cousre.models.js";
+import EnrollmentModel from "../models/Enrollment.models.js";
 
 
 export const createCourse = async (req, res) => {
@@ -24,7 +25,7 @@ export const createCourse = async (req, res) => {
             instructor,
             price,
             enrollLink,
-            catagory
+            category
         } = req.body;
 
         const courseImage = req.files?.courseImage?.[0]?.filename
@@ -49,7 +50,7 @@ export const createCourse = async (req, res) => {
             price,
             enrollLink,
             courseImage,
-            catagory,
+            category,
             createdBy: req.user.id
         });
 
@@ -175,11 +176,10 @@ export const getMyCreatedCourses = async (req, res) => {
         // Nếu không có courses do user tạo, lấy courses từ enrollments (cách cũ)
         let allCourses = createdCourses;
         if (createdCourses.length === 0) {
-            const EnrollmentModel = require("../models/Enrollment.models.js").default;
-            const enrollments = await EnrollmentModel.find({ userId })
+            const enrollments = await EnrollmentModel.find({ userId: userId })
                 .populate(
                     "courseId",
-                    "title lessons price level rating reviews instructor instructorImage courseImage catagory")
+                    "title lessons price level rating reviews instructor instructorImage courseImage category")
                 .populate("approvedBy", "name email")
                 .sort({ createdAt: -1 });
 

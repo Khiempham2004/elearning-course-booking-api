@@ -54,7 +54,7 @@ export const getMyCourses = async (req, res) => {
             status: e.status,
             createdAt: e.createdAt,
             ...(e.courseId ? {
-                title: e.courseId.title,
+                title: e.courseId?.title,
                 lessons: e.courseId.lessons,
                 price: e.courseId.price,
                 level: e.courseId.level,
@@ -110,6 +110,13 @@ export const getAllEnrollment = async (req, res) => {
             .populate("courseId", "title price level")
             .populate("approvedBy", "name email")
             .sort({ createdAt: -1 });
+
+        if (enrollments.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Không tìm thấy đăng ký nào"
+            });
+        }
 
         res.status(200).json({
             message: "Tất cả đã đăng ký",

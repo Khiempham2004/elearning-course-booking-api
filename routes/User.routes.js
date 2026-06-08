@@ -9,7 +9,7 @@ routesUser.post("/register", register);
 routesUser.post("/login", login);
 
 // lấy token từ login
-routesUser.get("/profile", verifytoken, authorize, getUserProfile)
+routesUser.get("/profile", verifytoken, getUserProfile)
 
 
 routesUser.get("/admin/dashboard", verifytoken, authorize("admin"), (req, res) => {
@@ -19,9 +19,16 @@ routesUser.get("/admin/dashboard", verifytoken, authorize("admin"), (req, res) =
     })
 });
 
-routesUser.get("/user/dashboard", verifytoken, isUser, (req, res) => {
+routesUser.get("/user/dashboard", verifytoken, authorize("User", "admin", "teacher"), (req, res) => {
     res.json({
         message: "Chào mừng bạn đến với User Dashboard",
+        user: req.user
+    })
+})
+
+routesUser.get("/teacher/dashboard", verifytoken, authorize("admin", "teacher"), (req, res) => {
+    res.json({
+        message: "Chào mừng bạn đến với Teacher Dashboard",
         user: req.user
     })
 })

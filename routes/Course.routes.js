@@ -8,7 +8,7 @@ const routesCourse = express.Router();
 
 routesCourse.post("/",
     verifytoken,
-    authorize("admin"),
+    authorize("admin", "teacher"),
     upload.fields([
         { name: 'courseImage', maxCount: 1 },
         { name: 'instructorImage', maxCount: 1 }
@@ -21,14 +21,14 @@ routesCourse.get("/:id", getCourseById);
 
 routesCourse.put("/:id",
     verifytoken,
-    authorize("admin"),
+    authorize("admin", "teacher"),
     upload.fields([
         { name: 'courseImage', maxCount: 1 },
         { name: 'instructorImage', maxCount: 1 }
     ]),
     updateCourse
 );
-routesCourse.delete("/:id", verifytoken, authorize("admin"), deleteCourse);
+routesCourse.delete("/:id", verifytoken, authorize("admin", "teacher"), deleteCourse);
 
 
 export default routesCourse;
