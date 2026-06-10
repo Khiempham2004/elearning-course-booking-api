@@ -14,6 +14,8 @@ const verifytoken = async (req, res, next) => {
         const verified = jwt.verify(tokenAuth, process.env.SECRET_KEY);
 
         const user = await User.findById(verified.id).select("-password");
+        console.log(user);
+        
 
         if (!user) {
             return res.status(404).json({

@@ -31,4 +31,4 @@ routesCourse.put("/:id",
 routesCourse.delete("/:id", verifytoken, authorize("admin", "teacher"), deleteCourse);
 
 
-export default routesCourse;
+export default routesCourse; 

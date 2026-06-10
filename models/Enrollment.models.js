@@ -41,7 +41,7 @@ const enrollmentSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    // ngày user hoàn thành course
+    // ngày hoàn thành course
     completedAt: {
         type: Date,
         default: null

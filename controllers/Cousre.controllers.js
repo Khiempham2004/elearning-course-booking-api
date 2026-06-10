@@ -8,13 +8,13 @@ export const createCourse = async (req, res) => {
         console.log("BODY : ", req.body);
         console.log("FILES : ", req.files);
 
-        if (!req.files) {
-            console.log("⚠️ NO FILES RECEIVED");
-        } else {
-            console.log("✅ FILES RECEIVED");
-            console.log("courseImage:", req.files.courseImage);
-            console.log("instructorImage:", req.files.instructorImage);
-        }
+        // if (!req.files) {
+        //     console.log("⚠️ NO FILES RECEIVED");
+        // } else {
+        //     console.log("✅ FILES RECEIVED");
+        //     console.log("courseImage:", req.files.courseImage);
+        //     console.log("instructorImage:", req.files.instructorImage);
+        // }
 
         const {
             title,
@@ -25,7 +25,7 @@ export const createCourse = async (req, res) => {
             instructor,
             price,
             enrollLink,
-            category
+            catagory
         } = req.body;
 
         const courseImage = req.files?.courseImage?.[0]?.filename
@@ -50,14 +50,14 @@ export const createCourse = async (req, res) => {
             price,
             enrollLink,
             courseImage,
-            category,
+            catagory,
             createdBy: req.user.id
         });
 
         const course = await newCourse.save();
 
         res.status(201).json({
-            message: "Tao khoa hoc thanh cong :",
+            message: "Tạo khóa học thành công :",
             data: course,
             success: true
         });
@@ -76,7 +76,7 @@ export const getAllCourses = async (req, res) => {
         const limit = parseInt(req.query.limit) || 25;
 
         const courses = await CourseModel.find().select(
-            "-reviews -description"
+            "-description"
         ).limit(limit).skip((page - 1) * limit).sort({ createdAt: -1 }).lean();
 
         const total = await CourseModel.countDocuments();
@@ -86,7 +86,7 @@ export const getAllCourses = async (req, res) => {
             total,
             currentPage: page,
             totalPages: Math.ceil(total / limit),
-            message: "Lay danh sach khoa hoc thanh cong : ",
+            message: "Lấy danh sách khóa học thành công : ",
             data: courses,
         });
     } catch (error) {
@@ -104,10 +104,10 @@ export const getCourseById = async (req, res) => {
         const newCourseById = await CourseModel.findById(req.params.id);
 
         if (!newCourseById) {
-            return res.status(404).json({ message: "Course not found" });
+            return res.status(404).json({ message: "Khóa học không tồn tại" });
         }
         res.status(200).json({
-            message: "Lay khoa hoc thanh cong : ",
+            message: "Lấy khóa học thành công : ",
             data: newCourseById,
         });
     } catch (error) {
@@ -137,11 +137,11 @@ export const updateCourse = async (req, res) => {
             { new: true }
         );
         if (!updatedCourses) {
-            return res.status(400).json({ message: "Khoa hoc khong ton tai!" })
+            return res.status(400).json({ message: "Khóa học không tồn tại" })
         };
 
         res.status(200).json({
-            message: "Cap nhat khoa hoc thanh cong",
+            message: "Cập nhật khóa học thành công ",
             data: updatedCourses,
             success: true
         });
@@ -156,11 +156,15 @@ export const deleteCourse = async (req, res) => {
     try {
         const deletedCourse = await CourseModel.findByIdAndDelete(req.params.id);
         if (!deletedCourse) {
-            return res.status(400).json({ message: "Course not found" })
+            return res.status(400).json({ message: "Khóa học không tồn tại" })
         }
-        res.status(200).json("Course deleted successfully", deletedCourse);
+        res.status(200).json({ message: "Khóa học đã được xóa thành công", data: deletedCourse });
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ 
+            message: error.message, 
+            success: false 
+        });
+        console.log(error);
     }
 }
 

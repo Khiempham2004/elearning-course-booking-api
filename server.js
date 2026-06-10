@@ -25,8 +25,8 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads"))
 // Routes
 app.use('/api/users', routesUser);
 app.use('/api/courses', routesCourse);
-app.use('/api/schedules', routeSchedule);
 app.use('/api/enrollments', routesEnroll);
+app.use('/api/schedules', routeSchedule);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
