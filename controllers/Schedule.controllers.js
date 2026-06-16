@@ -42,11 +42,11 @@ export const createSchedule = async (req, res) => {
 // get tat ca lich học
 export const getAllSchedules = async (req, res) => {
     try {
-        const schedules = await ScheduleModel.find().populate("courseId" , "title");
+        const schedules = await ScheduleModel.find().populate("courseId", "title");
         res.status(200).json({
             message: "Lấy tất cả lịch học thành công",
             schedules,
-        })  
+        })
     } catch (error) {
         console.log(error);
         res.status(500).json(error.message)
@@ -77,17 +77,24 @@ export const getSchedulesDetail = async (req, res) => {
 // lấy lịch học của User
 export const getMySchedules = async (req, res) => {
     try {
+        console.log("REQ Debug : ", req.user);
+
         const userId = req.user.id;
 
         const enrollments = await EnrollmentModel.find({
             userId,
             status: "approved"
-        })
+        });
+
+        console.log("enrollments : ", enrollments);
+
 
         const courseIds = enrollments.map(enrollment => enrollment.courseId);
+
         if (courseIds.length === 0) {
             return res.status(200).json({
-                message: "Người dùng chưa đăng ký khóa học nào",
+                message: "Người dùng chưa có khóa học phê duyệt hoặc đang chờ xét duyệt",
+                schedules: [],
                 data: [],
             });
         }
@@ -96,10 +103,14 @@ export const getMySchedules = async (req, res) => {
                 courseId:
                     { $in: courseIds } // tìm các document có giá trị nằm trong mảng
             })
-            .populate("courseId");
+            .populate("courseId", "title description image")
+            .sort({ date: 1, time: 1 });
+        console.log("SCHEDULE : ", mySchedules);
+
 
         res.status(200).json({
             message: "Lấy lịch học của người dùng thành công",
+            schedules: mySchedules,
             data: mySchedules
         });
     } catch (error) {
@@ -109,6 +120,41 @@ export const getMySchedules = async (req, res) => {
         })
     }
 }
+
+
+export const updateMySchedule = async (req, res) => {
+    const userId = req.user.id;
+    const scheduleId = req.params.id;
+
+    const schedule = await ScheduleModel.findById(scheduleId);
+
+    if (!schedule) {
+        return res.status(404).json({
+            message: "Không tìm thấy lịch học"
+        });
+    }
+
+    const enrollment = await EnrollmentModel.findOne({
+        userId,
+        courseId: schedule.courseId,
+        status: "approved"
+    });
+
+    if (!enrollment) {
+        return res.status(403).json({
+            message: "Bạn không có quyền sửa lịch này"
+        });
+    }
+
+    const updated = await ScheduleModel.findByIdAndUpdate(
+        scheduleId,
+        req.body,
+        { new: true }
+    );
+
+    res.json(updated);
+};
+
 
 //Cap nhat lich hoc
 export const updateSchedule = async (req, res) => {
