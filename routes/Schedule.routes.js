@@ -9,6 +9,7 @@ routeSchedule.get("/", verifytoken, authorize("admin", "teacher"), getAllSchedul
 routeSchedule.get("/my-schedules", verifytoken, authorize("User"), getMySchedules);
 
 routeSchedule.get("/:id", verifytoken, authorize("admin", "User", "teacher"), getSchedulesDetail);
+
 routeSchedule.post("/", verifytoken, authorize("admin"), createSchedule);
 routeSchedule.patch("/:id", verifytoken, authorize("admin"), updateSchedule);
 routeSchedule.delete("/:id", verifytoken, authorize("admin"), deletedSchedule);

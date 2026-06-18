@@ -8,14 +8,6 @@ export const createCourse = async (req, res) => {
         console.log("BODY : ", req.body);
         console.log("FILES : ", req.files);
 
-        // if (!req.files) {
-        //     console.log("⚠️ NO FILES RECEIVED");
-        // } else {
-        //     console.log("✅ FILES RECEIVED");
-        //     console.log("courseImage:", req.files.courseImage);
-        //     console.log("instructorImage:", req.files.instructorImage);
-        // }
-
         const {
             title,
             lessons,
@@ -77,7 +69,7 @@ export const getAllCourses = async (req, res) => {
 
         const courses = await CourseModel.find().select(
             "-description"
-        ).limit(limit).skip((page - 1) * limit).sort({ createdAt: -1 }).lean();
+        ).sort({ createdAt: -1 }).lean();
 
         const total = await CourseModel.countDocuments();
 
@@ -160,9 +152,9 @@ export const deleteCourse = async (req, res) => {
         }
         res.status(200).json({ message: "Khóa học đã được xóa thành công", data: deletedCourse });
     } catch (error) {
-        res.status(500).json({ 
-            message: error.message, 
-            success: false 
+        res.status(500).json({
+            message: error.message,
+            success: false
         });
         console.log(error);
     }

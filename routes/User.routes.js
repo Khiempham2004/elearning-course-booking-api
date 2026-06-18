@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, getUserProfile, getAllUsers, deleteUser, updateUserRole } from "../controllers/Auth.controllers.js";
+import { register, login, getUserProfile, getAllUsers, deleteUser, updateUserRole, updateProfile, createUser } from "../controllers/Auth.controllers.js";
 import verifytoken from "../middleware/auth.middleware.js";
 import { authorize, isAdmin, isUser } from "../middleware/authorize.middleware.js";
 
@@ -9,8 +9,7 @@ routesUser.post("/register", register);
 routesUser.post("/login", login);
 
 // lấy token từ login
-routesUser.get("/profile", verifytoken, getUserProfile)
-
+routesUser.get("/profile", verifytoken, getUserProfile);
 
 routesUser.get("/admin/dashboard", verifytoken, authorize("admin"), (req, res) => {
     res.json({
@@ -35,8 +34,13 @@ routesUser.get("/teacher/dashboard", verifytoken, authorize("admin", "teacher"),
 
 routesUser.get("/", verifytoken, authorize("admin", "teacher"), getAllUsers);
 
+routesUser.post("/", verifytoken, authorize("admin"), createUser)
+
 routesUser.delete("/:id", verifytoken, authorize("admin"), deleteUser);
 
+routesUser.put("/profile", verifytoken, updateProfile);
+
 routesUser.put("/:id", verifytoken, authorize("admin"), updateUserRole);
+
 
 export default routesUser;

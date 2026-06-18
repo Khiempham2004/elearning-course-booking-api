@@ -89,6 +89,44 @@ export const getAllUsers = async (req, res) => {
     }
 }
 
+export const createUser = async (req, res) => {
+    try {
+        const { name, email, password, role } = req.body;
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Email không tồn tại"
+            })
+        };
+
+        const hashPassword = await bcrypt.hash(
+            password, 10
+        );
+
+        const user = await User.create({
+            name,
+            email,
+            password: hashPassword,
+            role
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Tạo tài khoản thành công",
+            data: user
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        })
+    }
+}
+
 export const deleteUser = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
@@ -115,7 +153,7 @@ export const updateUserRole = async (req, res) => {
     try {
         const { role, name, email } = req.body;
 
-        if (!role || !['admin', 'User'].includes(role)) {
+        if (!role || !['admin', 'User', "teacher"].includes(role)) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid role. Must be 'admin' or 'User'"
@@ -160,3 +198,66 @@ export const updateUserRole = async (req, res) => {
         });
     }
 };
+
+export const updateProfile = async (req, res) => {
+    try {
+        console.log("BDOY : ", req.body);
+        console.log("USER : ", req.user);
+
+        const { name, email, password } = req.body;
+
+        if (!name?.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Name  is required"
+            });
+        }
+
+        const existingEmail = await User.findOne({
+            email,
+            _id: { $ne: req.user._id }
+        });
+
+
+        if (existingEmail) {
+            return res.status(400).json({
+                message: "Email aldready exists"
+            })
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                name,
+                email,
+                password
+            },
+            {
+                new: true
+            }
+        ).select("-password");
+        res.status(200).json({
+            success: true,
+            message: "Cập nhật profile thành công",
+            data: user,
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Cập nhật thất bại"
+        })
+    }
+}
+
+export const changePassword = async (req, res) => {
+    try {
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
