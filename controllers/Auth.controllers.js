@@ -46,8 +46,7 @@ export const login = async (req, res) => {
             email: newUser.email,
             role: newUser.role,
         };
-        // const SECRET = 'your-secret-key'
-        const token = jwt.sign(payload, 'your-secret-key', { expiresIn: '1h' });
+        const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
         res.status(200).json({ message: "Login successful", token, newUser });
     } catch (error) {
         res.status(500).json({ message: "Server error" });
