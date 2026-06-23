@@ -46,13 +46,13 @@ export const getMyCourses = async (req, res) => {
             .populate("approvedBy", "name email")
             .sort({ createdAt: -1 });
 
-        // Map enrollment data with full course info
         const courses = enrollments.map((e) => ({
             _id: e._id,
             enrollmentId: e._id,
             userId: e.userId,
             status: e.status,
             createdAt: e.createdAt,
+            courseId : e.courseId,
             ...(e.courseId ? {
                 title: e.courseId?.title,
                 lessons: e.courseId.lessons,

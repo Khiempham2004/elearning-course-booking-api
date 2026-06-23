@@ -26,10 +26,8 @@ export const register = async (req, res) => {
         await newUser.save();
 
         res.status(200).json({ message: "User registered successfully", user: newUser });
-
     } catch (error) {
         res.status(500).json({ message: "Server error" });
-        console.log(error);
     }
 }
 
@@ -53,7 +51,6 @@ export const login = async (req, res) => {
         res.status(200).json({ message: "Login successful", token, newUser });
     } catch (error) {
         res.status(500).json({ message: "Server error" });
-        console.log(error);
     }
 }
 
@@ -82,7 +79,6 @@ export const getAllUsers = async (req, res) => {
             users,
         })
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message: error.message
         })
@@ -119,7 +115,6 @@ export const createUser = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             success: false,
             message: error.message,
@@ -142,7 +137,6 @@ export const deleteUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message: error.message
         })
@@ -242,7 +236,6 @@ export const updateProfile = async (req, res) => {
             data: user,
         })
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             success: false,
             message: "Cập nhật thất bại"
@@ -254,7 +247,6 @@ export const changePassword = async (req, res) => {
     try {
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             success: false,
             message: error.message

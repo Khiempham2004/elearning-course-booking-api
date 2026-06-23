@@ -26,7 +26,7 @@ routesEnroll.get('/', verifytoken, authorize("admin", "teacher"), getAllEnrollme
 
 routesEnroll.patch('/:id/approve', verifytoken, isAdmin, approveEnrollment);
 routesEnroll.patch('/:id/reject', verifytoken, isAdmin, rejectEnrollment);
-routesEnroll.patch('/:id/complete', verifytoken, isAdmin, completeEnrollment);``
+routesEnroll.patch('/:id/complete', verifytoken, isAdmin, completeEnrollment);
 routesEnroll.patch('/:id/status', verifytoken, isAdmin, updateEnrollmentStatus);
 
 routesEnroll.get('/user/:userId', verifytoken, isAdmin, getEnrollmentByUser);
